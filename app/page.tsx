@@ -3,13 +3,15 @@
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import Image from "next/image";
+import Navigation from "./components/Navigation";
 
 export default function Home() {
   const cards = useQuery(api.cards.get);
 
   return (
-    <div className="min-h-screen bg-white p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-white">
+      <Navigation />
+      <div className="max-w-6xl mx-auto px-8">
         <h1 className="text-6xl font-bold mb-8 text-black">My Cards</h1>
 
         <div className="space-y-4">

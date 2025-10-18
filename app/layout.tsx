@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
+import "@uploadthing/react/styles.css";
 import ConvexClientProvider from "./ConvexClientProvider";
 
 const lato = Lato({
