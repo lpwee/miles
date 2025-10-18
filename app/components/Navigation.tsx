@@ -13,7 +13,7 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="bg-white border-b-4 border-gray-500 mb-8">
+    <nav className="bg-[#1a1f25] border-b border-[#2d333b] mb-8">
       <div className="max-w-6xl mx-auto px-8">
         <div className="flex gap-8">
           {navItems.map((item) => {
@@ -22,10 +22,10 @@ export default function Navigation() {
               <Link
                 key={item.path}
                 href={item.path}
-                className={`py-4 px-6 text-xl font-semibold transition-colors ${
+                className={`py-4 px-6 text-lg font-medium transition-colors ${
                   isActive
-                    ? "text-green-600 border-b-4 border-green-600"
-                    : "text-black hover:text-green-600"
+                    ? "text-[#3ecf8e] border-b-2 border-[#3ecf8e]"
+                    : "text-gray-400 hover:text-[#3ecf8e]"
                 }`}
               >
                 {item.name}

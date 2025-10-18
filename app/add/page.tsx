@@ -5,11 +5,12 @@ import { api } from "../../convex/_generated/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navigation from "../components/Navigation";
-import { UploadButton } from "../lib/uploadthing";
+import { UploadDropzone } from "../lib/uploadthing";
 
 export default function AddCard() {
   const router = useRouter();
   const addCard = useMutation(api.cards.add);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     imageUrl: "",
@@ -22,23 +23,37 @@ export default function AddCard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate that an image has been uploaded
+    if (!formData.imageUrl) {
+      alert("Please upload a card image before submitting.");
+      return;
+    }
+
+    // Prevent submission while uploading
+    if (isUploading) {
+      alert("Please wait for the image upload to complete.");
+      return;
+    }
+
     try {
       await addCard(formData);
       router.push("/");
     } catch (error) {
       console.error("Error adding card:", error);
+      alert("Failed to add card. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0f1419]">
       <Navigation />
       <div className="max-w-2xl mx-auto px-8">
-        <h1 className="text-6xl font-bold mb-8 text-black">Add Card</h1>
+        <h1 className="text-5xl font-bold mb-8 text-white">Add Card</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-xl font-semibold text-black mb-2">
+            <label className="block text-lg font-medium text-gray-300 mb-2">
               Card Name
             </label>
             <input
@@ -48,52 +63,70 @@ export default function AddCard() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
               placeholder="e.g., UOB Lady's Card"
             />
           </div>
 
           <div>
-            <label className="block text-xl font-semibold text-black mb-2">
-              Card Image
+            <label className="block text-lg font-medium text-gray-300 mb-2">
+              Card Image <span className="text-red-400">*</span>
             </label>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <UploadButton
-                  endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-                    // Do something with the response
-                    if (res?.[0]?.serverData?.url) {
-                      setFormData({ ...formData, imageUrl: res[0].serverData.url });
-                      alert("Upload Completed!");
-                    }
-                  }}
-                  onUploadError={(error: Error) => {
-                    // Do something with the error.
-                    alert(`ERROR! ${error.message}`);
-                  }}
-                />
-                {formData.imageUrl && (
-                  <span className="text-green-600 font-semibold">
-                    ✓ Image uploaded
-                  </span>
-                )}
-              </div>
-              <div className="text-center text-gray-600">or</div>
-              <input
-                type="text"
-                value={formData.imageUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, imageUrl: e.target.value })
-                }
-                className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
-                placeholder="Or paste image URL: /card-image.svg"
+              <UploadDropzone
+                endpoint="imageUploader"
+                onUploadBegin={() => {
+                  console.log("Upload started");
+                  setIsUploading(true);
+                }}
+                onClientUploadComplete={(res) => {
+                  console.log("Upload complete, full response:", res);
+                  setIsUploading(false);
+
+                  // Try multiple ways to get the URL
+                  const imageUrl = res?.[0]?.serverData?.url || res?.[0]?.url;
+
+                  if (imageUrl) {
+                    console.log("Setting imageUrl to:", imageUrl);
+                    setFormData((prev) => ({ ...prev, imageUrl }));
+                  } else {
+                    console.error("No URL found in response:", res);
+                    alert("Upload completed but no URL was returned. Please try again.");
+                  }
+                }}
+                onUploadError={(error: Error) => {
+                  console.error("Upload error:", error);
+                  setIsUploading(false);
+                  alert(`Upload failed: ${error.message}`);
+                }}
+                appearance={{
+                  container: "border-2 border-dashed border-[#2d333b] bg-[#1a1f25] rounded-lg",
+                  uploadIcon: "text-[#3ecf8e]",
+                  label: "text-gray-300",
+                  allowedContent: "text-gray-400",
+                  button: "bg-[#3ecf8e] text-[#0f1419] hover:bg-[#35b67d] transition-colors ut-ready:bg-[#3ecf8e] ut-uploading:bg-[#2d333b]"
+                }}
               />
+              {isUploading && (
+                <div className="text-center">
+                  <span className="text-yellow-400 font-semibold">
+                    ⏳ Uploading...
+                  </span>
+                </div>
+              )}
+              {formData.imageUrl && !isUploading && (
+                <div className="text-center space-y-2">
+                  <span className="text-[#3ecf8e] font-semibold">
+                    ✓ Image uploaded successfully
+                  </span>
+                  <p className="text-sm text-gray-400 break-all">{formData.imageUrl}</p>
+                </div>
+              )}
             </div>
           </div>
 
           <div>
-            <label className="block text-xl font-semibold text-black mb-2">
+            <label className="block text-lg font-medium text-gray-300 mb-2">
               Current Miles
             </label>
             <input
@@ -107,12 +140,12 @@ export default function AddCard() {
                   currentMiles: parseInt(e.target.value) || 0,
                 })
               }
-              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xl font-semibold text-black mb-2">
+            <label className="block text-lg font-medium text-gray-300 mb-2">
               Miles per Dollar
             </label>
             <input
@@ -127,13 +160,13 @@ export default function AddCard() {
                   milesPerDollar: parseFloat(e.target.value) || 0,
                 })
               }
-              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
               placeholder="e.g., 1.2"
             />
           </div>
 
           <div>
-            <label className="block text-xl font-semibold text-black mb-2">
+            <label className="block text-lg font-medium text-gray-300 mb-2">
               Monthly Reward Cap
             </label>
             <input
@@ -147,13 +180,13 @@ export default function AddCard() {
                   monthlyRewardCap: parseInt(e.target.value) || 0,
                 })
               }
-              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
               placeholder="e.g., 10000"
             />
           </div>
 
           <div>
-            <label className="block text-xl font-semibold text-black mb-2">
+            <label className="block text-lg font-medium text-gray-300 mb-2">
               Spending Limit
             </label>
             <input
@@ -167,13 +200,13 @@ export default function AddCard() {
                   spendingLimit: parseInt(e.target.value) || 0,
                 })
               }
-              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
               placeholder="e.g., 5000"
             />
           </div>
 
           <div>
-            <label className="block text-xl font-semibold text-black mb-2">
+            <label className="block text-lg font-medium text-gray-300 mb-2">
               Notes
             </label>
             <textarea
@@ -181,7 +214,7 @@ export default function AddCard() {
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
               }
-              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
               placeholder="e.g., Popular cashback/miles card"
               rows={3}
             />
@@ -190,14 +223,19 @@ export default function AddCard() {
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg text-xl"
+              disabled={isUploading || !formData.imageUrl}
+              className={`flex-1 font-semibold py-3 px-6 rounded-lg text-lg transition-colors ${
+                isUploading || !formData.imageUrl
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-[#3ecf8e] hover:bg-[#35b67d] text-[#0f1419]"
+              }`}
             >
-              Add Card
+              {isUploading ? "Uploading..." : "Add Card"}
             </button>
             <button
               type="button"
               onClick={() => router.push("/")}
-              className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg text-xl"
+              className="flex-1 bg-[#2d333b] hover:bg-[#3d434b] text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors"
             >
               Cancel
             </button>

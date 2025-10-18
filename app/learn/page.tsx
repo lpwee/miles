@@ -9,11 +9,11 @@ export default function Learn() {
   const cards = useQuery(api.cards.get);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0f1419]">
       <Navigation />
       <div className="max-w-6xl mx-auto px-8">
-        <h1 className="text-6xl font-bold mb-8 text-black">Learn</h1>
-        <p className="text-xl text-black mb-8">
+        <h1 className="text-5xl font-bold mb-8 text-white">Learn</h1>
+        <p className="text-lg text-gray-400 mb-8">
           Detailed information about your credit cards and miles progress
         </p>
 
@@ -25,33 +25,37 @@ export default function Learn() {
             return (
               <div
                 key={index}
-                className="border-4 border-gray-500 rounded-2xl p-6 bg-white"
+                className="border border-[#2d333b] rounded-xl p-6 bg-[#1a1f25] hover:border-[#3ecf8e] transition-colors"
               >
                 {/* Card Image */}
-                <div className="w-full h-40 relative mb-4">
-                  <Image
-                    src={card.imageUrl}
-                    alt={card.name}
-                    fill
-                    className="object-contain"
-                  />
+                <div className="w-full h-40 relative mb-4 bg-[#2d333b] rounded flex items-center justify-center">
+                  {card.imageUrl ? (
+                    <Image
+                      src={card.imageUrl}
+                      alt={card.name}
+                      fill
+                      className="object-contain"
+                    />
+                  ) : (
+                    <span className="text-gray-500 text-6xl">📷</span>
+                  )}
                 </div>
 
                 {/* Card Name */}
-                <h2 className="text-2xl font-bold text-black mb-4">
+                <h2 className="text-2xl font-bold text-white mb-4">
                   {card.name}
                 </h2>
 
                 {/* Progress Bar */}
                 <div className="mb-4">
-                  <div className="w-full h-8 bg-gray-200 rounded-lg overflow-hidden">
+                  <div className="w-full h-8 bg-[#0f1419] rounded-lg overflow-hidden">
                     <div className="h-full flex">
                       <div
-                        className="bg-green-500 h-full transition-all"
+                        className="bg-[#3ecf8e] h-full transition-all"
                         style={{ width: `${percentage}%` }}
                       />
                       <div
-                        className="bg-orange-500 h-full transition-all"
+                        className="bg-[#2d333b] h-full transition-all"
                         style={{ width: `${100 - percentage}%` }}
                       />
                     </div>
@@ -59,44 +63,44 @@ export default function Learn() {
                 </div>
 
                 {/* Stats */}
-                <div className="space-y-2 text-black">
-                  <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Current Miles:</span>
+                <div className="space-y-2 text-white">
+                  <div className="flex justify-between text-base">
+                    <span className="font-medium text-gray-400">Current Miles:</span>
                     <span>{card.currentMiles.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Monthly Cap:</span>
+                  <div className="flex justify-between text-base">
+                    <span className="font-medium text-gray-400">Monthly Cap:</span>
                     <span>{card.monthlyRewardCap.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Remaining:</span>
+                  <div className="flex justify-between text-base">
+                    <span className="font-medium text-gray-400">Remaining:</span>
                     <span>{remainingMiles.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Progress:</span>
-                    <span>{percentage.toFixed(1)}%</span>
+                  <div className="flex justify-between text-base">
+                    <span className="font-medium text-gray-400">Progress:</span>
+                    <span className="text-[#3ecf8e]">{percentage.toFixed(1)}%</span>
                   </div>
-                  <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Miles per Dollar:</span>
+                  <div className="flex justify-between text-base">
+                    <span className="font-medium text-gray-400">Miles per Dollar:</span>
                     <span>{card.milesPerDollar}</span>
                   </div>
-                  <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Spending Limit:</span>
+                  <div className="flex justify-between text-base">
+                    <span className="font-medium text-gray-400">Spending Limit:</span>
                     <span>{card.spendingLimit.toLocaleString()}</span>
                   </div>
                 </div>
 
                 {/* Notes Section */}
                 {card.notes && (
-                  <div className="mt-4 pt-4 border-t-2 border-gray-300">
-                    <p className="text-sm font-semibold text-black mb-1">Notes:</p>
-                    <p className="text-sm text-gray-700">{card.notes}</p>
+                  <div className="mt-4 pt-4 border-t border-[#2d333b]">
+                    <p className="text-sm font-medium text-gray-400 mb-1">Notes:</p>
+                    <p className="text-sm text-gray-300">{card.notes}</p>
                   </div>
                 )}
 
                 {/* Additional Info */}
-                <div className="mt-4 pt-4 border-t-2 border-gray-300">
-                  <p className="text-sm text-gray-700">
+                <div className="mt-4 pt-4 border-t border-[#2d333b]">
+                  <p className="text-sm text-gray-400">
                     {percentage >= 100
                       ? "🎉 Congratulations! You've reached your target!"
                       : percentage >= 75
@@ -113,7 +117,7 @@ export default function Learn() {
 
         {(!cards || cards.length === 0) && (
           <div className="text-center py-12">
-            <p className="text-2xl text-gray-500">
+            <p className="text-xl text-gray-400">
               No cards found. Add your first card to get started!
             </p>
           </div>
