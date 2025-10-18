@@ -6,7 +6,7 @@ import Image from "next/image";
 import Navigation from "./components/Navigation";
 
 export default function Home() {
-  const cards = useQuery(api.cards.get);
+  const cards = useQuery(api.userCards.get);
 
   return (
     <div className="min-h-screen bg-[#0f1419]">

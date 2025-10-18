@@ -8,8 +8,11 @@
  * @module
  */
 
-import type * as cards from "../cards.js";
+import type * as auth from "../auth.js";
+import type * as http from "../http.js";
 import type * as seed from "../seed.js";
+import type * as supportedCards from "../supportedCards.js";
+import type * as userCards from "../userCards.js";
 
 import type {
   ApiFromModules,
@@ -26,8 +29,11 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  cards: typeof cards;
+  auth: typeof auth;
+  http: typeof http;
   seed: typeof seed;
+  supportedCards: typeof supportedCards;
+  userCards: typeof userCards;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

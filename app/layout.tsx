@@ -21,13 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${lato.variable} font-sans antialiased`}
-        style={{ fontFamily: 'var(--font-lato)' }}
-      >
-        <ConvexClientProvider>{children}</ConvexClientProvider>
-      </body>
-    </html>
+    <ConvexClientProvider>
+      <html lang="en">
+        <body className={`${lato.variable} font-sans antialiased`} style={{ fontFamily: 'var(--font-lato)' }}>
+          {children}
+        </body>
+      </html>
+    </ConvexClientProvider>
   );
 }

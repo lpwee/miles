@@ -1,43 +1,38 @@
 "use client";
 
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navigation from "../components/Navigation";
-import { UploadDropzone } from "../lib/uploadthing";
+import type { Id } from "../../convex/_generated/dataModel";
 
 export default function AddCard() {
   const router = useRouter();
-  const addCard = useMutation(api.cards.add);
-  const [isUploading, setIsUploading] = useState(false);
+  const addUserCard = useMutation(api.userCards.add);
+  const supportedCards = useQuery(api.supportedCards.get);
   const [formData, setFormData] = useState({
-    name: "",
-    imageUrl: "",
+    supportedCardId: "" as Id<"supportedCards"> | "",
+    nickname: "",
     currentMiles: 0,
-    milesPerDollar: 0,
-    monthlyRewardCap: 0,
-    spendingLimit: 0,
-    notes: "",
+    userNotes: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate that an image has been uploaded
-    if (!formData.imageUrl) {
-      alert("Please upload a card image before submitting.");
-      return;
-    }
-
-    // Prevent submission while uploading
-    if (isUploading) {
-      alert("Please wait for the image upload to complete.");
+    if (!formData.supportedCardId) {
+      alert("Please select a card type.");
       return;
     }
 
     try {
-      await addCard(formData);
+      await addUserCard({
+        supportedCardId: formData.supportedCardId as Id<"supportedCards">,
+        nickname: formData.nickname || undefined,
+        currentMiles: formData.currentMiles,
+        userNotes: formData.userNotes || undefined,
+      });
       router.push("/");
     } catch (error) {
       console.error("Error adding card:", error);
@@ -54,75 +49,55 @@ export default function AddCard() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-lg font-medium text-gray-300 mb-2">
-              Card Name
+              Select Card Type <span className="text-red-400">*</span>
             </label>
-            <input
-              type="text"
+            <select
               required
-              value={formData.name}
+              value={formData.supportedCardId}
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, supportedCardId: e.target.value as Id<"supportedCards"> })
               }
               className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
-              placeholder="e.g., UOB Lady's Card"
-            />
+            >
+              <option value="">-- Choose a card --</option>
+              {supportedCards?.map((card) => (
+                <option key={card._id} value={card._id}>
+                  {card.name} ({card.milesPerDollar} miles/$)
+                </option>
+              ))}
+            </select>
+            {formData.supportedCardId && supportedCards && (
+              <div className="mt-3 p-4 bg-[#1a1f25] border border-[#2d333b] rounded-lg">
+                {(() => {
+                  const selectedCard = supportedCards.find(c => c._id === formData.supportedCardId);
+                  return selectedCard ? (
+                    <div className="text-sm text-gray-300 space-y-1">
+                      <p><span className="font-medium text-gray-400">Miles per Dollar:</span> {selectedCard.milesPerDollar}</p>
+                      <p><span className="font-medium text-gray-400">Monthly Cap:</span> {selectedCard.monthlyRewardCap.toLocaleString()}</p>
+                      <p><span className="font-medium text-gray-400">Spending Limit:</span> ${selectedCard.spendingLimit.toLocaleString()}</p>
+                      {selectedCard.notes && (
+                        <p><span className="font-medium text-gray-400">Notes:</span> {selectedCard.notes}</p>
+                      )}
+                    </div>
+                  ) : null;
+                })()}
+              </div>
+            )}
           </div>
 
           <div>
             <label className="block text-lg font-medium text-gray-300 mb-2">
-              Card Image <span className="text-red-400">*</span>
+              Nickname (Optional)
             </label>
-            <div className="space-y-4">
-              <UploadDropzone
-                endpoint="imageUploader"
-                onUploadBegin={() => {
-                  console.log("Upload started");
-                  setIsUploading(true);
-                }}
-                onClientUploadComplete={(res) => {
-                  console.log("Upload complete, full response:", res);
-                  setIsUploading(false);
-
-                  // Try multiple ways to get the URL
-                  const imageUrl = res?.[0]?.serverData?.url || res?.[0]?.url;
-
-                  if (imageUrl) {
-                    console.log("Setting imageUrl to:", imageUrl);
-                    setFormData((prev) => ({ ...prev, imageUrl }));
-                  } else {
-                    console.error("No URL found in response:", res);
-                    alert("Upload completed but no URL was returned. Please try again.");
-                  }
-                }}
-                onUploadError={(error: Error) => {
-                  console.error("Upload error:", error);
-                  setIsUploading(false);
-                  alert(`Upload failed: ${error.message}`);
-                }}
-                appearance={{
-                  container: "border-2 border-dashed border-[#2d333b] bg-[#1a1f25] rounded-lg",
-                  uploadIcon: "text-[#3ecf8e]",
-                  label: "text-gray-300",
-                  allowedContent: "text-gray-400",
-                  button: "bg-[#3ecf8e] text-[#0f1419] hover:bg-[#35b67d] transition-colors ut-ready:bg-[#3ecf8e] ut-uploading:bg-[#2d333b]"
-                }}
-              />
-              {isUploading && (
-                <div className="text-center">
-                  <span className="text-yellow-400 font-semibold">
-                    ⏳ Uploading...
-                  </span>
-                </div>
-              )}
-              {formData.imageUrl && !isUploading && (
-                <div className="text-center space-y-2">
-                  <span className="text-[#3ecf8e] font-semibold">
-                    ✓ Image uploaded successfully
-                  </span>
-                  <p className="text-sm text-gray-400 break-all">{formData.imageUrl}</p>
-                </div>
-              )}
-            </div>
+            <input
+              type="text"
+              value={formData.nickname}
+              onChange={(e) =>
+                setFormData({ ...formData, nickname: e.target.value })
+              }
+              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
+              placeholder="e.g., My Travel Card"
+            />
           </div>
 
           <div>
@@ -141,81 +116,21 @@ export default function AddCard() {
                 })
               }
               className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
+              placeholder="0"
             />
           </div>
 
           <div>
             <label className="block text-lg font-medium text-gray-300 mb-2">
-              Miles per Dollar
-            </label>
-            <input
-              type="number"
-              required
-              step="0.1"
-              min="0"
-              value={formData.milesPerDollar}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  milesPerDollar: parseFloat(e.target.value) || 0,
-                })
-              }
-              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
-              placeholder="e.g., 1.2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-300 mb-2">
-              Monthly Reward Cap
-            </label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={formData.monthlyRewardCap}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  monthlyRewardCap: parseInt(e.target.value) || 0,
-                })
-              }
-              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
-              placeholder="e.g., 10000"
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-300 mb-2">
-              Spending Limit
-            </label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={formData.spendingLimit}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  spendingLimit: parseInt(e.target.value) || 0,
-                })
-              }
-              className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
-              placeholder="e.g., 5000"
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-300 mb-2">
-              Notes
+              Personal Notes (Optional)
             </label>
             <textarea
-              value={formData.notes}
+              value={formData.userNotes}
               onChange={(e) =>
-                setFormData({ ...formData, notes: e.target.value })
+                setFormData({ ...formData, userNotes: e.target.value })
               }
               className="w-full px-4 py-3 border border-[#2d333b] rounded-lg bg-[#1a1f25] text-white text-lg focus:outline-none focus:border-[#3ecf8e] transition-colors"
-              placeholder="e.g., Popular cashback/miles card"
+              placeholder="e.g., Using this for groceries and dining"
               rows={3}
             />
           </div>
@@ -223,14 +138,14 @@ export default function AddCard() {
           <div className="flex gap-4">
             <button
               type="submit"
-              disabled={isUploading || !formData.imageUrl}
+              disabled={!formData.supportedCardId}
               className={`flex-1 font-semibold py-3 px-6 rounded-lg text-lg transition-colors ${
-                isUploading || !formData.imageUrl
+                !formData.supportedCardId
                   ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                   : "bg-[#3ecf8e] hover:bg-[#35b67d] text-[#0f1419]"
               }`}
             >
-              {isUploading ? "Uploading..." : "Add Card"}
+              Add Card to My Account
             </button>
             <button
               type="button"

@@ -1,45 +1,83 @@
 import { mutation } from "./_generated/server";
 
-export const seedCards = mutation({
+export const seedDatabase = mutation({
   args: {},
   handler: async (ctx) => {
-    // Clear existing cards
-    const existingCards = await ctx.db.query("cards").collect();
-    for (const card of existingCards) {
+    // Clear existing data
+    const existingSupportedCards = await ctx.db.query("supportedCards").collect();
+    for (const card of existingSupportedCards) {
       await ctx.db.delete(card._id);
     }
 
-    // Add sample cards
-    await ctx.db.insert("cards", {
+    const existingUserCards = await ctx.db.query("userCards").collect();
+    for (const card of existingUserCards) {
+      await ctx.db.delete(card._id);
+    }
+
+    // Seed supportedCards (card types/templates)
+    const uobLadyCardId = await ctx.db.insert("supportedCards", {
       name: "UOB Lady's Card",
       imageUrl: "/card-image.svg",
-      currentMiles: 3200,
       milesPerDollar: 1.4,
       monthlyRewardCap: 10000,
       spendingLimit: 3000,
-      notes: "Popular cashback/miles card",
+      notes: "Popular cashback/miles card with good rewards rate",
     });
 
-    await ctx.db.insert("cards", {
+    const amexCenturionId = await ctx.db.insert("supportedCards", {
       name: "Amex Centurion",
       imageUrl: "/card-image.svg",
-      currentMiles: 200,
       milesPerDollar: 2.0,
       monthlyRewardCap: 25000,
       spendingLimit: 10000,
-      notes: "Premium rewards card",
+      notes: "Premium rewards card with highest miles earning rate",
     });
 
-    await ctx.db.insert("cards", {
+    const dbsLiveFreshId = await ctx.db.insert("supportedCards", {
       name: "DBS Live Fresh Card",
       imageUrl: "/card-image.svg",
-      currentMiles: 2500,
       milesPerDollar: 1.2,
       monthlyRewardCap: 8000,
       spendingLimit: 2500,
-      notes: "Flexible rewards card",
+      notes: "Flexible rewards card for everyday spending",
     });
 
-    return { success: true };
+    const citiPremierMilesId = await ctx.db.insert("supportedCards", {
+      name: "Citi PremierMiles",
+      imageUrl: "/card-image.svg",
+      milesPerDollar: 1.6,
+      monthlyRewardCap: 12000,
+      spendingLimit: 5000,
+      notes: "Great for travel rewards and airline miles",
+    });
+
+    const ocbc365Id = await ctx.db.insert("supportedCards", {
+      name: "OCBC 365 Credit Card",
+      imageUrl: "/card-image.svg",
+      milesPerDollar: 1.0,
+      monthlyRewardCap: 6000,
+      spendingLimit: 2000,
+      notes: "Good cashback on dining and groceries",
+    });
+
+    // Optionally seed some sample userCards
+    await ctx.db.insert("userCards", {
+      supportedCardId: uobLadyCardId,
+      nickname: "My Daily Card",
+      currentMiles: 3200,
+      userNotes: "Using this for groceries and dining",
+    });
+
+    await ctx.db.insert("userCards", {
+      supportedCardId: amexCenturionId,
+      nickname: "Travel Card",
+      currentMiles: 15000,
+      userNotes: "Saving up for flight redemption",
+    });
+
+    return {
+      success: true,
+      message: "Database seeded successfully with supportedCards and userCards"
+    };
   },
 });
