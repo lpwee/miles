@@ -14,7 +14,10 @@ export default function AddCard() {
     name: "",
     imageUrl: "",
     currentMiles: 0,
-    totalMiles: 5000,
+    milesPerDollar: 0,
+    monthlyRewardCap: 0,
+    spendingLimit: 0,
+    notes: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,20 +113,77 @@ export default function AddCard() {
 
           <div>
             <label className="block text-xl font-semibold text-black mb-2">
-              Total Miles Target
+              Miles per Dollar
             </label>
             <input
               type="number"
               required
-              min="1"
-              value={formData.totalMiles}
+              step="0.1"
+              min="0"
+              value={formData.milesPerDollar}
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  totalMiles: parseInt(e.target.value) || 0,
+                  milesPerDollar: parseFloat(e.target.value) || 0,
                 })
               }
               className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              placeholder="e.g., 1.2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xl font-semibold text-black mb-2">
+              Monthly Reward Cap
+            </label>
+            <input
+              type="number"
+              required
+              min="0"
+              value={formData.monthlyRewardCap}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  monthlyRewardCap: parseInt(e.target.value) || 0,
+                })
+              }
+              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              placeholder="e.g., 10000"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xl font-semibold text-black mb-2">
+              Spending Limit
+            </label>
+            <input
+              type="number"
+              required
+              min="0"
+              value={formData.spendingLimit}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  spendingLimit: parseInt(e.target.value) || 0,
+                })
+              }
+              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              placeholder="e.g., 5000"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xl font-semibold text-black mb-2">
+              Notes
+            </label>
+            <textarea
+              value={formData.notes}
+              onChange={(e) =>
+                setFormData({ ...formData, notes: e.target.value })
+              }
+              className="w-full px-4 py-3 border-2 border-gray-500 rounded-lg text-black text-lg"
+              placeholder="e.g., Popular cashback/miles card"
+              rows={3}
             />
           </div>
 

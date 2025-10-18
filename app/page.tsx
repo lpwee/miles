@@ -24,7 +24,7 @@ export default function Home() {
 
           {/* Card Rows */}
           {cards?.map((card, index) => {
-            const percentage = (card.currentMiles / card.totalMiles) * 100;
+            const percentage = (card.currentMiles / card.monthlyRewardCap) * 100;
 
             return (
               <div
@@ -64,7 +64,7 @@ export default function Home() {
                   {/* Miles Count */}
                   <div className="text-right">
                     <span className="text-2xl font-normal text-black">
-                      {card.currentMiles.toLocaleString()}/{card.totalMiles.toLocaleString()}
+                      {card.currentMiles.toLocaleString()}/{card.monthlyRewardCap.toLocaleString()}
                     </span>
                   </div>
                 </div>

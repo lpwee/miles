@@ -6,6 +6,9 @@ export default defineSchema({
     name: v.string(),
     imageUrl: v.string(),
     currentMiles: v.number(),
-    totalMiles: v.number(),
+    milesPerDollar: v.number(),
+    monthlyRewardCap: v.number(),
+    spendingLimit: v.number(),
+    notes: v.optional(v.string()),
   }),
 });

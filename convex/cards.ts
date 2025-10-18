@@ -13,14 +13,20 @@ export const add = mutation({
     name: v.string(),
     imageUrl: v.string(),
     currentMiles: v.number(),
-    totalMiles: v.number(),
+    milesPerDollar: v.number(),
+    monthlyRewardCap: v.number(),
+    spendingLimit: v.number(),
+    notes: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const cardId = await ctx.db.insert("cards", {
       name: args.name,
       imageUrl: args.imageUrl,
       currentMiles: args.currentMiles,
-      totalMiles: args.totalMiles,
+      milesPerDollar: args.milesPerDollar,
+      monthlyRewardCap: args.monthlyRewardCap,
+      spendingLimit: args.spendingLimit,
+      notes: args.notes,
     });
     return cardId;
   },

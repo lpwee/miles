@@ -19,8 +19,8 @@ export default function Learn() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {cards?.map((card, index) => {
-            const percentage = (card.currentMiles / card.totalMiles) * 100;
-            const remainingMiles = card.totalMiles - card.currentMiles;
+            const percentage = (card.currentMiles / card.monthlyRewardCap) * 100;
+            const remainingMiles = card.monthlyRewardCap - card.currentMiles;
 
             return (
               <div
@@ -65,8 +65,8 @@ export default function Learn() {
                     <span>{card.currentMiles.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Total Target:</span>
-                    <span>{card.totalMiles.toLocaleString()}</span>
+                    <span className="font-semibold">Monthly Cap:</span>
+                    <span>{card.monthlyRewardCap.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-lg">
                     <span className="font-semibold">Remaining:</span>
@@ -76,7 +76,23 @@ export default function Learn() {
                     <span className="font-semibold">Progress:</span>
                     <span>{percentage.toFixed(1)}%</span>
                   </div>
+                  <div className="flex justify-between text-lg">
+                    <span className="font-semibold">Miles per Dollar:</span>
+                    <span>{card.milesPerDollar}</span>
+                  </div>
+                  <div className="flex justify-between text-lg">
+                    <span className="font-semibold">Spending Limit:</span>
+                    <span>{card.spendingLimit.toLocaleString()}</span>
+                  </div>
                 </div>
+
+                {/* Notes Section */}
+                {card.notes && (
+                  <div className="mt-4 pt-4 border-t-2 border-gray-300">
+                    <p className="text-sm font-semibold text-black mb-1">Notes:</p>
+                    <p className="text-sm text-gray-700">{card.notes}</p>
+                  </div>
+                )}
 
                 {/* Additional Info */}
                 <div className="mt-4 pt-4 border-t-2 border-gray-300">

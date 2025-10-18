@@ -9,26 +9,35 @@ export const seedCards = mutation({
       await ctx.db.delete(card._id);
     }
 
-    // Add sample cards (matching the screenshot)
+    // Add sample cards
     await ctx.db.insert("cards", {
       name: "UOB Lady's Card",
       imageUrl: "/card-image.svg",
       currentMiles: 3200,
-      totalMiles: 5000,
+      milesPerDollar: 1.4,
+      monthlyRewardCap: 10000,
+      spendingLimit: 3000,
+      notes: "Popular cashback/miles card",
     });
 
     await ctx.db.insert("cards", {
-      name: "UOB Lady's Card",
+      name: "Amex Centurion",
       imageUrl: "/card-image.svg",
       currentMiles: 200,
-      totalMiles: 5000,
+      milesPerDollar: 2.0,
+      monthlyRewardCap: 25000,
+      spendingLimit: 10000,
+      notes: "Premium rewards card",
     });
 
     await ctx.db.insert("cards", {
-      name: "UOB Lady's Card",
+      name: "DBS Live Fresh Card",
       imageUrl: "/card-image.svg",
       currentMiles: 2500,
-      totalMiles: 5000,
+      milesPerDollar: 1.2,
+      monthlyRewardCap: 8000,
+      spendingLimit: 2500,
+      notes: "Flexible rewards card",
     });
 
     return { success: true };
