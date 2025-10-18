@@ -1,0 +1,29 @@
+<svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card background -->
+  <rect width="120" height="80" rx="8" fill="url(#gradient)"/>
+
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="120" y2="80">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#67B6E8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Card chip -->
+  <rect x="10" y="25" width="20" height="16" rx="2" fill="#FFD700" opacity="0.8"/>
+  <line x1="12" y1="29" x2="28" y2="29" stroke="#DAA520" stroke-width="0.5"/>
+  <line x1="12" y1="32" x2="28" y2="32" stroke="#DAA520" stroke-width="0.5"/>
+  <line x1="12" y1="35" x2="28" y2="35" stroke="#DAA520" stroke-width="0.5"/>
+
+  <!-- UOB text -->
+  <text x="10" y="60" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">UOB</text>
+
+  <!-- Decorative circle (like flower) -->
+  <circle cx="100" cy="25" r="12" fill="#E91E63" opacity="0.7"/>
+  <circle cx="96" cy="22" r="5" fill="#FCE4EC" opacity="0.9"/>
+  <circle cx="104" cy="22" r="5" fill="#FCE4EC" opacity="0.9"/>
+  <circle cx="96" cy="28" r="5" fill="#FCE4EC" opacity="0.9"/>
+  <circle cx="104" cy="28" r="5" fill="#FCE4EC" opacity="0.9"/>
+  <circle cx="100" cy="25" r="4" fill="#FFF176"/>
+</svg>
