@@ -4,6 +4,8 @@ import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import Image from "next/image";
 import Navigation from "./components/Navigation";
+import { Authenticated, Unauthenticated } from "convex/react";
+import Link from "next/link";
 
 export default function Home() {
   const cards = useQuery(api.userCards.get);
@@ -11,72 +13,104 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0f1419]">
       <Navigation />
-      <div className="max-w-6xl mx-auto px-8">
-        <h1 className="text-5xl font-bold mb-8 text-white">My Cards</h1>
+      <Authenticated>
+        <div className="max-w-6xl mx-auto px-8">
+          <h1 className="text-5xl font-bold mb-8 text-white">My Cards</h1>
 
-        <div className="space-y-4">
-          {/* Table Header */}
-          <div className="grid grid-cols-[200px_1fr_200px] gap-4 px-8 pb-4">
-            <div className="text-xl font-semibold text-gray-400">Name</div>
-            <div className="text-xl font-semibold text-gray-400">Miles</div>
-            <div className="text-xl font-semibold text-gray-400 text-right">Earned</div>
-          </div>
+          <div className="space-y-4">
+            {/* Table Header */}
+            <div className="grid grid-cols-[200px_1fr_200px] gap-4 px-8 pb-4">
+              <div className="text-xl font-semibold text-gray-400">Name</div>
+              <div className="text-xl font-semibold text-gray-400">Miles</div>
+              <div className="text-xl font-semibold text-gray-400 text-right">Earned</div>
+            </div>
 
-          {/* Card Rows */}
-          {cards?.map((card, index) => {
-            const percentage = (card.currentMiles / card.monthlyRewardCap) * 100;
+            {/* Card Rows */}
+            {cards && cards.length > 0 ? (
+              cards.map((card, index) => {
+                const percentage = (card.currentMiles / card.monthlyRewardCap) * 100;
 
-            return (
-              <div
-                key={index}
-                className="border border-[#2d333b] rounded-xl p-6 bg-[#1a1f25] hover:border-[#3ecf8e] transition-colors"
-              >
-                <div className="grid grid-cols-[200px_1fr_200px] gap-4 items-center">
-                  {/* Card Image and Name */}
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 relative flex-shrink-0 bg-[#2d333b] rounded flex items-center justify-center">
-                      {card.imageUrl ? (
-                        <Image
-                          src={card.imageUrl}
-                          alt={card.name}
-                          fill
-                          className="object-contain rounded"
-                        />
-                      ) : (
-                        <span className="text-gray-500 text-2xl">📷</span>
-                      )}
-                    </div>
-                    <span className="text-lg font-medium text-white">{card.name}</span>
-                  </div>
+                return (
+                  <div
+                    key={index}
+                    className="border border-[#2d333b] rounded-xl p-6 bg-[#1a1f25] hover:border-[#3ecf8e] transition-colors"
+                  >
+                    <div className="grid grid-cols-[200px_1fr_200px] gap-4 items-center">
+                      {/* Card Image and Name */}
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 relative flex-shrink-0 bg-[#2d333b] rounded flex items-center justify-center">
+                          {card.imageUrl ? (
+                            <Image
+                              src={card.imageUrl}
+                              alt={card.name}
+                              fill
+                              className="object-contain rounded"
+                            />
+                          ) : (
+                            <span className="text-gray-500 text-2xl">📷</span>
+                          )}
+                        </div>
+                        <span className="text-lg font-medium text-white">{card.name}</span>
+                      </div>
 
-                  {/* Progress Bar */}
-                  <div className="flex items-center">
-                    <div className="w-full h-10 bg-[#0f1419] rounded-lg overflow-hidden">
-                      <div className="h-full flex">
-                        <div
-                          className="bg-[#3ecf8e] h-full transition-all"
-                          style={{ width: `${percentage}%` }}
-                        />
-                        <div
-                          className="bg-[#2d333b] h-full"
-                          style={{ width: `${100 - percentage}%` }}
-                        />
+                      {/* Progress Bar */}
+                      <div className="flex items-center">
+                        <div className="w-full h-10 bg-[#0f1419] rounded-lg overflow-hidden">
+                          <div className="h-full flex">
+                            <div
+                              className="bg-[#3ecf8e] h-full transition-all"
+                              style={{ width: `${percentage}%` }}
+                            />
+                            <div
+                              className="bg-[#2d333b] h-full"
+                              style={{ width: `${100 - percentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Miles Count */}
+                      <div className="text-right">
+                        <span className="text-xl font-medium text-white">
+                          {card.currentMiles.toLocaleString()}/{card.monthlyRewardCap.toLocaleString()}
+                        </span>
                       </div>
                     </div>
                   </div>
-
-                  {/* Miles Count */}
-                  <div className="text-right">
-                    <span className="text-xl font-medium text-white">
-                      {card.currentMiles.toLocaleString()}/{card.monthlyRewardCap.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
+                );
+              })
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-xl text-gray-400 mb-4">
+                  You haven&apos;t added any cards yet.
+                </p>
+                <Link
+                  href="/add"
+                  className="text-[#3ecf8e] hover:underline"
+                >
+                  Add your first card
+                </Link>
               </div>
-            );
-          })}
+            )}
+          </div>
         </div>
-      </div>
+      </Authenticated>
+      <Unauthenticated>
+        <div className="max-w-6xl mx-auto px-8">
+          <div className="text-center py-24">
+            <h1 className="text-5xl font-bold mb-4 text-white">Welcome to Miles Tracker</h1>
+            <p className="text-xl text-gray-400 mb-8">
+              Please sign in to view and manage your cards.
+            </p>
+            <Link
+              href="/login"
+              className="inline-block bg-[#3ecf8e] text-[#0f1419] px-8 py-3 rounded-lg font-semibold hover:bg-[#35b67a] transition-colors"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+      </Unauthenticated>
     </div>
   );
 }

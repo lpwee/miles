@@ -13,9 +13,10 @@ export default defineSchema({
     notes: v.optional(v.string()),
   }),
   userCards: defineTable({
+    userId: v.id("users"),
     supportedCardId: v.id("supportedCards"),
     nickname: v.optional(v.string()),
     currentMiles: v.number(),
     userNotes: v.optional(v.string())
-  })
+  }).index("by_user", ["userId"])
 });
