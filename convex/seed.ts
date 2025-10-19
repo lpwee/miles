@@ -60,20 +60,8 @@ export const seedDatabase = mutation({
       notes: "Good cashback on dining and groceries",
     });
 
-    // Optionally seed some sample userCards
-    await ctx.db.insert("userCards", {
-      supportedCardId: uobLadyCardId,
-      nickname: "My Daily Card",
-      currentMiles: 3200,
-      userNotes: "Using this for groceries and dining",
-    });
-
-    await ctx.db.insert("userCards", {
-      supportedCardId: amexCenturionId,
-      nickname: "Travel Card",
-      currentMiles: 15000,
-      userNotes: "Saving up for flight redemption",
-    });
+    // Note: userCards are user-specific and shouldn't be seeded
+    // Users will add their own cards after authentication
 
     return {
       success: true,

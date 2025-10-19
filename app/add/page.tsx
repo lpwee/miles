@@ -1,13 +1,11 @@
 "use client";
 
 import { useMutation, useQuery } from "convex/react";
-import { Authenticated, Unauthenticated } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navigation from "../components/Navigation";
 import type { Id } from "../../convex/_generated/dataModel";
-import Link from "next/link";
 
 export default function AddCard() {
   const router = useRouter();
@@ -35,7 +33,7 @@ export default function AddCard() {
         currentMiles: formData.currentMiles,
         userNotes: formData.userNotes || undefined,
       });
-      router.push("/");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error adding card:", error);
       alert("Failed to add card. Please try again.");
@@ -45,8 +43,7 @@ export default function AddCard() {
   return (
     <div className="min-h-screen bg-[#0f1419]">
       <Navigation />
-      <Authenticated>
-        <div className="max-w-2xl mx-auto px-8">
+      <div className="max-w-2xl mx-auto px-8">
         <h1 className="text-5xl font-bold mb-8 text-white">Add Card</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -152,31 +149,14 @@ export default function AddCard() {
             </button>
             <button
               type="button"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/dashboard")}
               className="flex-1 bg-[#2d333b] hover:bg-[#3d434b] text-white font-semibold py-3 px-6 rounded-lg text-lg transition-colors"
             >
               Cancel
             </button>
           </div>
         </form>
-        </div>
-      </Authenticated>
-      <Unauthenticated>
-        <div className="max-w-6xl mx-auto px-8">
-          <div className="text-center py-24">
-            <h1 className="text-5xl font-bold mb-4 text-white">Add Card</h1>
-            <p className="text-xl text-gray-400 mb-8">
-              Please sign in to add cards to your account.
-            </p>
-            <Link
-              href="/login"
-              className="inline-block bg-[#3ecf8e] text-[#0f1419] px-8 py-3 rounded-lg font-semibold hover:bg-[#35b67a] transition-colors"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </Unauthenticated>
+      </div>
     </div>
   );
 }

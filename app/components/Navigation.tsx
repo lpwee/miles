@@ -9,9 +9,14 @@ export default function Navigation() {
   const pathname = usePathname();
   const { signOut } = useAuthActions();
 
-  const navItems = [
-    { name: "My Cards", path: "/" },
+  const authenticatedNavItems = [
+    { name: "Dashboard", path: "/dashboard" },
     { name: "Add Card", path: "/add" },
+    { name: "Learn", path: "/learn" },
+  ];
+
+  const publicNavItems = [
+    { name: "Home", path: "/" },
     { name: "Learn", path: "/learn" },
   ];
 
@@ -20,22 +25,42 @@ export default function Navigation() {
       <div className="max-w-6xl mx-auto px-8">
         <div className="flex justify-between items-center">
           <div className="flex gap-8">
-            {navItems.map((item) => {
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className={`py-4 px-6 text-lg font-medium transition-colors ${
-                    isActive
-                      ? "text-[#3ecf8e] border-b-2 border-[#3ecf8e]"
-                      : "text-gray-400 hover:text-[#3ecf8e]"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              );
-            })}
+            <Authenticated>
+              {authenticatedNavItems.map((item) => {
+                const isActive = pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    className={`py-4 px-6 text-lg font-medium transition-colors ${
+                      isActive
+                        ? "text-[#3ecf8e] border-b-2 border-[#3ecf8e]"
+                        : "text-gray-400 hover:text-[#3ecf8e]"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </Authenticated>
+            <Unauthenticated>
+              {publicNavItems.map((item) => {
+                const isActive = pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    className={`py-4 px-6 text-lg font-medium transition-colors ${
+                      isActive
+                        ? "text-[#3ecf8e] border-b-2 border-[#3ecf8e]"
+                        : "text-gray-400 hover:text-[#3ecf8e]"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </Unauthenticated>
           </div>
 
           <div className="flex items-center gap-4">
