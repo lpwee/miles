@@ -11,6 +11,7 @@ export default function Navigation() {
 
   const authenticatedNavItems = [
     { name: "Dashboard", path: "/dashboard" },
+    { name: "Transactions", path: "/transactions" },
     { name: "Add Card", path: "/add" },
     { name: "Learn", path: "/learn" },
   ];

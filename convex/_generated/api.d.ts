@@ -10,9 +10,12 @@
 
 import type * as ResendWithHash from "../ResendWithHash.js";
 import type * as auth from "../auth.js";
+import type * as crons from "../crons.js";
 import type * as http from "../http.js";
+import type * as notionSync from "../notionSync.js";
 import type * as seed from "../seed.js";
 import type * as supportedCards from "../supportedCards.js";
+import type * as transactions from "../transactions.js";
 import type * as userCards from "../userCards.js";
 
 import type {
@@ -32,9 +35,12 @@ import type {
 declare const fullApi: ApiFromModules<{
   ResendWithHash: typeof ResendWithHash;
   auth: typeof auth;
+  crons: typeof crons;
   http: typeof http;
+  notionSync: typeof notionSync;
   seed: typeof seed;
   supportedCards: typeof supportedCards;
+  transactions: typeof transactions;
   userCards: typeof userCards;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
